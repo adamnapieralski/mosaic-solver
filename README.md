@@ -1,2 +1,2 @@
 # mosaic-solver
-Haskell program for solving mosaic structure based on a number of neighbours in each cell.
+Haskell program for solving a mosaic (fill-a-pix) puzzle.
