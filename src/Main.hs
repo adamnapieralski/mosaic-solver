@@ -1,4 +1,8 @@
 module Main where
-import Tree
+%import Solver
+import IOHandler
 
-main = putStrLn (show (depth (Node 1 Empty Empty)))
+main = do
+    board <- readBoard "data/input1.txt"
+    let resBoard = solve(board)
+    print resBoard
