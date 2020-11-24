@@ -1,5 +1,5 @@
 module Main where
-%import Solver
+import Solver
 import IOHandler
 
 main = do
