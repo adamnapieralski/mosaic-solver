@@ -94,3 +94,10 @@ fillFullRemainingOfCell :: Board -> Board -> Int -> Int -> Board
 fillFullRemainingOfCell numBoard markBoard y x
     | (countBlankNeighbours markBoard y x) == digitToInt (element numBoard y x) = fillNeighbours markBoard (getValidNeighbours markBoard y x) y x
     | otherwise = markBoard
+
+boardToString :: Board -> String
+boardToString board = (hLine board) ++ (boardToString_ board) ++ (hLine board) where
+    boardToString_ (Board board) = go board
+    go [x] = "|" ++ x ++ "|\n"
+    go (x:xs) = ("|" ++ x ++ "|\n") ++ (go xs)
+    hLine board = (replicate (2 + (getW board)) '-') ++ "\n"
