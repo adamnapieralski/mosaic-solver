@@ -11,4 +11,5 @@ instance Eq Neighbour where
     SW == SW = True
     W == W = True
     NW == NW = True
+    C == C = True
     _ == _ = False
