@@ -23,13 +23,13 @@ getH (Board board) = length board
 getW :: Board -> Int
 getW (Board board)  | length board == 0 = 0
                     | otherwise = length (board !! 0)
-
+-- | Get row of the specified cell's neighbour.
 getNbY :: Board -> Neighbour -> Int -> Maybe Int
 getNbY board nb y   | elem nb [NW, N, NE] = (if inRange (y-1) 0 (getH board) then Just (y-1) else Nothing)
                     | elem nb [E, C, W] = Just y
                     | elem nb [SW, S, SE] = (if inRange (y+1) 0 (getH board) then Just (y+1) else Nothing)
 
-
+-- | Get column of the specified cell's neighbour.
 getNbX :: Board -> Neighbour -> Int -> Maybe Int
 getNbX board nb x   | elem nb [NE, E, SE] = (if inRange (x+1) 0 (getW board) then Just (x+1) else Nothing)
                     | elem nb [N, C, S] = Just x
@@ -46,6 +46,7 @@ isNeighbourValid board n y x =
             Nothing -> False
         Nothing -> False
 
+-- |Check if the given neighbour has the specified char. 
 isNeighbourFilled :: Board -> Neighbour -> Int -> Int -> Char -> Bool
 isNeighbourFilled board nb y x sign =
     case isCellFilled board (getNbY board nb y) (getNbX board nb x) sign of
@@ -60,12 +61,14 @@ fillCell markBoard y x sign =
             Nothing -> markBoard
         Nothing -> markBoard
 
+-- | Change the specified neighbours to the given char.
 fillNeighbours :: Board -> [Neighbour] -> Int -> Int -> Char -> Board
 fillNeighbours markBoard [] _ _ _ = markBoard
 fillNeighbours markBoard (n:nbs) y x sign =
     fillNeighbours (fillCell markBoard (getNbY markBoard n y) (getNbX markBoard n x) sign)
         nbs y x sign
 
+-- | Check if specified cell has the given char.
 isCellFilled :: Board -> Maybe Int -> Maybe Int -> Char -> Maybe Bool
 isCellFilled _ Nothing _ _ = Nothing
 isCellFilled _ _ Nothing _ = Nothing
@@ -85,7 +88,7 @@ countBlankNeighbours :: Board -> Int -> Int -> Int
 countBlankNeighbours markBoard y x = go markBoard (checkNeighboursFill markBoard [N, NE, E, SE, S, SW, W, NW, C] y x 'X') y x 0 where
     go _ [] _ _ counter = counter
     go markBoard (b:bs) y x counter = go markBoard bs y x (counter + blankAdd) where
-        blankAdd    | b == (Just False) = 1
+        blankAdd    | b == Just False = 1
                     | otherwise = 0
 
 getValidNeighbours :: Board -> Int -> Int -> [Neighbour]

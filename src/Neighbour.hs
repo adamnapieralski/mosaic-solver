@@ -1,5 +1,7 @@
 module Neighbour where
 
+-- | Neighbour represents cells in relative position to the given cell
+--   including the cell itself
 data Neighbour = N | NE | E | SE | S | SW | W | NW | C deriving Show
 
 instance Eq Neighbour where
