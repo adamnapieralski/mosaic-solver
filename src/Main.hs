@@ -1,21 +1,22 @@
 module Main where
 import Solver
-import IOHandler
+import IOHandler ( readBoard )
 import Board
 import Neighbour
-import System.Environment
+import System.Environment ( getArgs )
 
+inputFile :: [[Char]] -> [Char]
 inputFile [x] = x
-inputFile _ = "data/input1.txt"
+inputFile _ = "data/input3_simple.txt"
 
+main :: IO ()
 main = do
     args <- getArgs
     board <- readBoard (inputFile args)
-    -- let resBoard = solve(board)
-    let resBoard = makeEmptyWithSize (getH board) (getW board)
-    print(checkNeighboursFill resBoard [N, S, W] 0 2)
-    print(getValidNeighbours resBoard 0 0)
-    let filledTL = fillFullRemainingOfCell board resBoard 0 0
-    putStr (boardToString filledTL)
-    putStr "\n"
+    let resBoard = solve board
+    putStr "result \n"
+    putStr (boardToString resBoard)
+    putStr "pretty \n"
+    putStr (boardToString (makePretty resBoard))
+    putStr "input \n"
     putStr (boardToString board)
