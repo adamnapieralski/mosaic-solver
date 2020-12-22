@@ -55,6 +55,7 @@ executable mosaic-solver
                       Solver,
                       Board,
                       Neighbour,
+                      SimpleLogicSolver,
                       Utils
 
   -- LANGUAGE extensions used by modules in this package.
