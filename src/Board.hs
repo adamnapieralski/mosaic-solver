@@ -84,11 +84,18 @@ checkNeighboursFill markBoard nbs y x sign = go markBoard nbs [] y x sign where
     go _ [] fills _ _ _ = fills
     go markBoard (n:nbs) fills y x sign = go markBoard nbs (fills ++ [(isCellFilled markBoard (getNbY markBoard n y) (getNbX markBoard n x) sign)]) y x sign
 
-countBlankNeighbours :: Board -> Int -> Int -> Int
-countBlankNeighbours markBoard y x = go markBoard (checkNeighboursFill markBoard [N, NE, E, SE, S, SW, W, NW, C] y x 'X') y x 0 where
+countSignNeighbours :: Board -> Int -> Int -> Char -> Int
+countSignNeighbours markBoard y x sign = go markBoard (checkNeighboursFill markBoard [N, NE, E, SE, S, SW, W, NW, C] y x sign) y x 0 where
     go _ [] _ _ counter = counter
-    go markBoard (b:bs) y x counter = go markBoard bs y x (counter + blankAdd) where
-        blankAdd    | b == Just False = 1
+    go markBoard (b:bs) y x counter = go markBoard bs y x (counter + addNum) where
+        addNum      | b == Just True = 1
+                    | otherwise = 0
+
+countNotSignNeighbours :: Board -> Int -> Int -> Char -> Int
+countNotSignNeighbours markBoard y x sign = go markBoard (checkNeighboursFill markBoard [N, NE, E, SE, S, SW, W, NW, C] y x sign) y x 0 where
+    go _ [] _ _ counter = counter
+    go markBoard (b:bs) y x counter = go markBoard bs y x (counter + addNum) where
+        addNum      | b == Just False = 1
                     | otherwise = 0
 
 getValidNeighbours :: Board -> Int -> Int -> [Neighbour]
@@ -105,7 +112,7 @@ getFilledNeighbours board y x sign = go board [] (getValidNeighbours board y x) 
 
 fillFullRemainingOfCell :: Board -> Board -> Int -> Int -> Board
 fillFullRemainingOfCell numBoard markBoard y x
-    | (countBlankNeighbours markBoard y x) == digitToInt (element numBoard y x) = fillNeighbours markBoard (getValidNeighbours markBoard y x) y x 'X'
+    | (countNotSignNeighbours markBoard y x 'X') == digitToInt (element numBoard y x) = fillNeighbours markBoard (getValidNeighbours markBoard y x) y x 'X'
     | otherwise = markBoard
 
 boardToString :: Board -> String

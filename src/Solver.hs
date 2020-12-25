@@ -4,6 +4,7 @@ import Neighbour
 import SimpleLogicSolver
 
 import Debug.Trace ( trace )
+import Data.Char
 
 -- | Solve the mosaic problem
 solve :: Board -> Board
@@ -32,21 +33,27 @@ iterateBoard numBoard resBoard fun =
     iterCol numBoard resBoard fun y (x:xs) = iterCol numBoard (iterCell numBoard resBoard fun y x) fun y xs
     iterCell numBoard resBoard fun y x = fun numBoard resBoard y x 
 
--- | Check if all cells meet specified requirements, that are defines as a functions that takes as the arguments
---   the board, row and columns and returns Bool. 
-checkBoard :: Board -> ( Board -> Int -> Int -> Bool) -> Bool 
-checkBoard board fun =
-    let h = getH board                              
+-- | Check if all cells meet specified requirement, that are defined as a function that takes as the arguments
+--   two boards, row and column and returns Bool. 
+checkDoubleBoard :: Board -> Board -> ( Board -> Board -> Int -> Int -> Bool) -> Bool
+checkDoubleBoard board1 board2 fun =
+    let h = getH board1
         rows = [0..(h - 1)]
-    in iterRow board fun rows True where
-    iterRow board _  _ False = False
-    iterRow board _  [] res = res 
-    iterRow board fun (y:ys) True = iterRow board fun ys (iterCol board fun y [0..(getW board - 1)] True)
-    iterCol board _ _ [] res = res
-    iterCol board _ _ _ False = False
-    iterCol board fun y (x:xs) True = iterCol board fun y xs (iterCell board fun y x True)
-    iterCell board _ _ _ False = False
-    iterCell board fun y x True = fun board y x 
+    in iterRow board1 board2 fun rows True where
+    iterRow _ _ _ _ False = False
+    iterRow _ _ _ [] res = res
+    iterRow board1 board2 fun (y:ys) True = iterRow board1 board2 fun ys (iterCol board1 board2 fun y [0..(getW board1 - 1)] True)
+    iterCol _ _ _ _ _ False = False
+    iterCol _ _ _ _ [] res = res
+    iterCol board1 board2 fun y (x:xs) True = iterCol board1 board2 fun y xs (iterCell board1 board2 fun y x True)
+    iterCell _ _ _ _ _ False = False
+    iterCell board1 board2 fun y x True = fun board1 board2 y x
+
+-- | Check if all cells meet specified requirements, that are defined as a function that takes as the arguments
+--   the board, row and column and returns Bool. 
+checkBoard :: Board -> ( Board -> Int -> Int -> Bool) -> Bool 
+checkBoard board fun = checkDoubleBoard board board funDouble where
+    funDouble board _ y x = fun board y x
 
 -- | Solve the mosaic problem using basic logic. Cells are updated only when they can be clearly marked as filled or empty.
 --   The alorithm iterates over the board until all cells are defined or iterations limit is reached.
@@ -60,5 +67,12 @@ solveSimpleLogic numBoard resBoard = go numBoard resBoard 10 False where
 -- | Check if all cells are defined as filled or empty.
 checkIfSolved:: Board -> Bool 
 checkIfSolved board = checkBoard board check where
-    check board y x = isNeighbourFilled board C y x '0' || isNeighbourFilled board C y x 'X' 
+    check board y x = isNeighbourFilled board C y x '0' || isNeighbourFilled board C y x 'X'
 
+-- | Check if all marked solutions in resBoard are valid
+checkIfValid:: Board -> Board -> Bool
+checkIfValid resBoard numBoard = checkDoubleBoard resBoard numBoard check where
+    check resBoard numBoard y x =
+        if element numBoard y x == '.' then True
+        else countSignNeighbours resBoard y x 'X' <= digitToInt (element numBoard y x) &&
+            countSignNeighbours resBoard y x '0' <= 9 - digitToInt (element numBoard y x)
