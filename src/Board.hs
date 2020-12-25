@@ -121,3 +121,29 @@ boardToString board = hLine board ++ boardToString_ board ++ hLine board where
     go [x] = "|" ++ x ++ "|\n"
     go (x:xs) = ("|" ++ x ++ "|\n") ++ go xs
     hLine board = replicate (2 + getW board) '-' ++ "\n"
+
+-- | Check if all cells meet specified requirement, that are defined as a function that takes as the arguments
+--   two boards, row and column and returns Bool. 
+checkDoubleBoard :: Board -> Board -> ( Board -> Board -> Int -> Int -> Bool) -> Bool
+checkDoubleBoard board1 board2 fun =
+    let h = getH board1
+        rows = [0..(h - 1)]
+    in iterRow board1 board2 fun rows True where
+    iterRow _ _ _ _ False = False
+    iterRow _ _ _ [] res = res
+    iterRow board1 board2 fun (y:ys) True = iterRow board1 board2 fun ys (iterCol board1 board2 fun y [0..(getW board1 - 1)] True)
+    iterCol _ _ _ _ _ False = False
+    iterCol _ _ _ _ [] res = res
+    iterCol board1 board2 fun y (x:xs) True = iterCol board1 board2 fun y xs (iterCell board1 board2 fun y x True)
+    iterCell _ _ _ _ _ False = False
+    iterCell board1 board2 fun y x True = fun board1 board2 y x
+
+-- | Check if all cells meet specified requirements, that are defined as a function that takes as the arguments
+--   the board, row and column and returns Bool. 
+checkBoard :: Board -> ( Board -> Int -> Int -> Bool) -> Bool 
+checkBoard board fun = checkDoubleBoard board board funDouble where
+    funDouble board _ y x = fun board y x
+
+areSame :: Board -> Board -> Bool
+areSame board1 board2 = checkDoubleBoard board1 board2 funEq where
+    funEq board1 board2 y x = (element board1 y x) == (element board2 y x)
