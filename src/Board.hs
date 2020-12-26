@@ -84,11 +84,18 @@ checkNeighboursFill markBoard nbs y x sign = go markBoard nbs [] y x sign where
     go _ [] fills _ _ _ = fills
     go markBoard (n:nbs) fills y x sign = go markBoard nbs (fills ++ [(isCellFilled markBoard (getNbY markBoard n y) (getNbX markBoard n x) sign)]) y x sign
 
-countBlankNeighbours :: Board -> Int -> Int -> Int
-countBlankNeighbours markBoard y x = go markBoard (checkNeighboursFill markBoard [N, NE, E, SE, S, SW, W, NW, C] y x 'X') y x 0 where
+countSignNeighbours :: Board -> Int -> Int -> Char -> Int
+countSignNeighbours markBoard y x sign = go markBoard (checkNeighboursFill markBoard [N, NE, E, SE, S, SW, W, NW, C] y x sign) y x 0 where
     go _ [] _ _ counter = counter
-    go markBoard (b:bs) y x counter = go markBoard bs y x (counter + blankAdd) where
-        blankAdd    | b == Just False = 1
+    go markBoard (b:bs) y x counter = go markBoard bs y x (counter + addNum) where
+        addNum      | b == Just True = 1
+                    | otherwise = 0
+
+countNotSignNeighbours :: Board -> Int -> Int -> Char -> Int
+countNotSignNeighbours markBoard y x sign = go markBoard (checkNeighboursFill markBoard [N, NE, E, SE, S, SW, W, NW, C] y x sign) y x 0 where
+    go _ [] _ _ counter = counter
+    go markBoard (b:bs) y x counter = go markBoard bs y x (counter + addNum) where
+        addNum      | b == Just False = 1
                     | otherwise = 0
 
 getValidNeighbours :: Board -> Int -> Int -> [Neighbour]
@@ -105,7 +112,7 @@ getFilledNeighbours board y x sign = go board [] (getValidNeighbours board y x) 
 
 fillFullRemainingOfCell :: Board -> Board -> Int -> Int -> Board
 fillFullRemainingOfCell numBoard markBoard y x
-    | (countBlankNeighbours markBoard y x) == digitToInt (element numBoard y x) = fillNeighbours markBoard (getValidNeighbours markBoard y x) y x 'X'
+    | (countNotSignNeighbours markBoard y x 'X') == digitToInt (element numBoard y x) = fillNeighbours markBoard (getValidNeighbours markBoard y x) y x 'X'
     | otherwise = markBoard
 
 boardToString :: Board -> String
@@ -114,3 +121,29 @@ boardToString board = hLine board ++ boardToString_ board ++ hLine board where
     go [x] = "|" ++ x ++ "|\n"
     go (x:xs) = ("|" ++ x ++ "|\n") ++ go xs
     hLine board = replicate (2 + getW board) '-' ++ "\n"
+
+-- | Check if all cells meet specified requirement, that are defined as a function that takes as the arguments
+--   two boards, row and column and returns Bool. 
+checkDoubleBoard :: Board -> Board -> ( Board -> Board -> Int -> Int -> Bool) -> Bool
+checkDoubleBoard board1 board2 fun =
+    let h = getH board1
+        rows = [0..(h - 1)]
+    in iterRow board1 board2 fun rows True where
+    iterRow _ _ _ _ False = False
+    iterRow _ _ _ [] res = res
+    iterRow board1 board2 fun (y:ys) True = iterRow board1 board2 fun ys (iterCol board1 board2 fun y [0..(getW board1 - 1)] True)
+    iterCol _ _ _ _ _ False = False
+    iterCol _ _ _ _ [] res = res
+    iterCol board1 board2 fun y (x:xs) True = iterCol board1 board2 fun y xs (iterCell board1 board2 fun y x True)
+    iterCell _ _ _ _ _ False = False
+    iterCell board1 board2 fun y x True = fun board1 board2 y x
+
+-- | Check if all cells meet specified requirements, that are defined as a function that takes as the arguments
+--   the board, row and column and returns Bool. 
+checkBoard :: Board -> ( Board -> Int -> Int -> Bool) -> Bool 
+checkBoard board fun = checkDoubleBoard board board funDouble where
+    funDouble board _ y x = fun board y x
+
+areSame :: Board -> Board -> Bool
+areSame board1 board2 = checkDoubleBoard board1 board2 funEq where
+    funEq board1 board2 y x = (element board1 y x) == (element board2 y x)
