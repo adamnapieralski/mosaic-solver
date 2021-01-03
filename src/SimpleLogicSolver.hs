@@ -13,8 +13,9 @@ processNeighbourCells numBoard resBoard y x =
         ns0 = getFilledNeighbours resBoard y x '0'
         cellNum = digitToInt (element numBoard y x)
     in  go ns nsX ns0 cellNum where
+                              -- contradiction
+        go ns nsX ns0 cellNum | length nsX > cellNum || length ns0 > (length ns - cellNum) = Nothing
                               -- number in the cell equals the number of the neighbours.
-        go ns nsX ns0 cellNum | length nsX > cellNum || length ns0 > (9 - cellNum) = Nothing
                               | length ns == cellNum = fillNeighbours resBoard ns y x 'X'
                               -- number in the cell equals the number of the filled neighbours, remaining cells must be empty.
                               | length nsX == cellNum = fillNeighbours resBoard (ns \\ nsX) y x '0'
