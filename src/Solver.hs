@@ -38,13 +38,14 @@ solveSimpleLogic :: Board -> Board -> Board -> Board
 solveSimpleLogic numBoard resBoard prevBoard = go numBoard resBoard prevBoard False where
     go _ resBoard _ _ | trace (boardToString resBoard) False = undefined
     go _ resBoard _ True = resBoard
-    go numBoard resBoard prevBoard solved = go numBoard (iterateBoard numBoard resBoard SimpleLogicSolver.processCell) resBoard (simpleLogicStopValidation resBoard prevBoard)
+    go numBoard resBoard prevBoard solved = go numBoard (SimpleLogicSolver.processBoard numBoard resBoard 0 0) resBoard (simpleLogicStopValidation resBoard prevBoard)
+
 
 simpleLogicStopValidation :: Board -> Board -> Bool
 simpleLogicStopValidation resBoard prevBoard = checkIfSolved resBoard || areSame resBoard prevBoard
 
 -- | Check if all cells are defined as filled or empty.
-checkIfSolved :: Board -> Bool 
+checkIfSolved :: Board -> Bool
 checkIfSolved board = checkBoard board check where
     check board y x = isNeighbourFilled board C y x '0' || isNeighbourFilled board C y x 'X'
 

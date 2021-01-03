@@ -3,12 +3,6 @@ import Board
 import Data.Char ( digitToInt )
 import Data.List ( (\\) )
 
--- |Check if the given cell in the input board has a number, if so process its neighbours.
-processCell :: Board -> Board -> Int -> Int -> Board
-processCell numBoard resBoard y x
-    | element numBoard y x == '.' = resBoard
-    | otherwise = processNeighbourCells numBoard resBoard y x
-
 -- |For the given cell update its neighbours using basic logic,
 --  i.e. modify them only if they can be clearly defined
 processNeighbourCells :: Board -> Board -> Int -> Int -> Board
@@ -27,3 +21,10 @@ processNeighbourCells numBoard resBoard y x =
                               | length ns - length ns0 == cellNum = fillNeighbours resBoard (ns \\ ns0) y x 'X'
                               | otherwise = resBoard
 
+-- | Iterate the board and try to solve it using simple logic
+processBoard :: Board -> Board -> Int -> Int -> Board
+processBoard numBoard resBoard y x
+    | x >= getW resBoard = processBoard numBoard resBoard (y+1) 0 
+    | y >= getH resBoard = resBoard
+    | element numBoard y x == '.' = processBoard numBoard resBoard y (x+1)
+    | otherwise = processBoard numBoard (processNeighbourCells numBoard resBoard y x) y (x+1)
