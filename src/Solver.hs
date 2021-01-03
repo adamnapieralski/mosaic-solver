@@ -2,6 +2,7 @@ module Solver where
 import Board
 import Neighbour
 import SimpleLogicSolver
+import BacktrackingSolver
 
 import Debug.Trace ( trace )
 import Data.Char
@@ -14,7 +15,7 @@ solve numBoard = let h = getH numBoard
                      resBoard = makeEmptyWithSize h w in
                      go (solveSimpleLogic numBoard resBoard numBoard) where
                      go resBoard | checkIfSolved resBoard = resBoard
-                                 | otherwise = resBoard
+                                 | otherwise = solveBacktracking numBoard resBoard numBoard
 
 -- | Modify the board to have only 'X' and empty cells
 makePretty :: Board -> Board
@@ -43,7 +44,15 @@ solveSimpleLogic numBoard resBoard prevBoard = go numBoard (Just resBoard) (Just
     go _ resBoard _ _ | trace (maybe "Error, wrong input board" boardToString resBoard) False = undefined
     go _ resBoard _ True = fromJust resBoard
     go numBoard Nothing _ _ = makeEmptyWithSize (getH numBoard) (getW numBoard)
-    go numBoard resBoard prevBoard solved = go numBoard (SimpleLogicSolver.processBoard numBoard (fromJust resBoard)) resBoard (simpleLogicStopValidation (fromJust resBoard) (fromJust prevBoard))
+    go numBoard resBoard prevBoard solved = go numBoard (SimpleLogicSolver.processBoard numBoard (fromJust resBoard) 0 0) resBoard (simpleLogicStopValidation (fromJust resBoard) (fromJust prevBoard))
+
+solveBacktracking :: Board -> Board -> Board -> Board
+solveBacktracking numBoard resBoard prevBoard = go numBoard (Just resBoard) (Just prevBoard) False where
+    go _ resBoard _ _ | trace (maybe "Error, wrong input board" boardToString resBoard) False = undefined
+    go _ resBoard _ True = fromJust resBoard
+    go numBoard Nothing _ _ = makeEmptyWithSize (getH numBoard) (getW numBoard)
+    go numBoard resBoard prevBoard solved = go numBoard (BacktrackingSolver.processBoard numBoard (fromJust resBoard)) resBoard (simpleLogicStopValidation (fromJust resBoard) (fromJust prevBoard))
+
 
 
 simpleLogicStopValidation :: Board -> Board -> Bool

@@ -23,9 +23,9 @@ processNeighbourCells numBoard resBoard y x =
                               | length ns - length ns0 == cellNum = fillNeighbours resBoard (ns \\ ns0) y x 'X'
                               | otherwise = Just resBoard
 
--- | Iterate the board and try to solve it using simple logic
-processBoard :: Board -> Board -> Maybe Board
-processBoard numBoard resBoard = go numBoard (Just resBoard) 0 0 where
+-- | Iterate the board and try to solve it using simple logic. If Nothing is returned it means tha the board can't be solved.
+processBoard :: Board -> Board -> Int -> Int -> Maybe Board
+processBoard numBoard resBoard y x = go numBoard (Just resBoard) y x where
     go _ Nothing  _ _ = Nothing
     go numBoard resBoard y x | x >= getW (fromJust resBoard) = go numBoard resBoard (y+1) 0 
                              | y >= getH (fromJust resBoard) = resBoard
