@@ -4,8 +4,8 @@ import Data.Char ( digitToInt )
 import Data.List ( (\\) )
 import Data.Maybe
 
--- |For the given cell update its neighbours using basic logic,
---  i.e. modify them only if they can be clearly defined
+-- | For the given cell update its neighbours using basic logic,
+--   i.e. modify them only if they can be clearly defined
 processNeighbourCells :: Board -> Board -> Int -> Int -> Maybe Board
 processNeighbourCells numBoard resBoard y x =
     let ns = getValidNeighbours numBoard y x

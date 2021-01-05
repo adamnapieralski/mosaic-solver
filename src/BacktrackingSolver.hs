@@ -11,10 +11,9 @@ checkSolved :: Board -> Bool
 checkSolved board = checkBoard board check where
     check board y x = isNeighbourFilled board C y x '0' || isNeighbourFilled board C y x 'X'
 
--- | Iterate the board and try to solve it using backtracking. If Nothing is returned it means tha the board can't be solved.
+-- | Iterate the board and try to solve it using backtracking. If Nothing is returned it means that the board can't be solved.
 processBoard :: Board -> Board -> Maybe Board
 processBoard numBoard resBoard = go numBoard (Just resBoard) 0 0 where
-    -- go _ resBoard y x | trace ("Solving backtracking " ++ [intToDigit y] ++ " " ++ [intToDigit x] ++ "\n"  ++ (maybe "Error, wrong input board" boardToString resBoard)) False = undefined
     go _ Nothing  _ _ = Nothing
     go numBoard resBoard y x | x >= getW (fromJust resBoard) = go numBoard resBoard (y+1) 0 
                              | y >= getH (fromJust resBoard) = resBoard
