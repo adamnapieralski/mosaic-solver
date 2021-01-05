@@ -7,7 +7,7 @@ import System.Environment ( getArgs )
 
 inputFile :: [[Char]] -> [Char]
 inputFile [x] = x
-inputFile _ = "data/input3_simple.txt"
+inputFile _ = "data/heart.txt"
 
 main :: IO ()
 main = do

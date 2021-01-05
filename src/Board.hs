@@ -61,12 +61,20 @@ fillCell markBoard y x sign =
             Nothing -> markBoard
         Nothing -> markBoard
 
--- | Change the specified neighbours to the given char.
-fillNeighbours :: Board -> [Neighbour] -> Int -> Int -> Char -> Board
-fillNeighbours markBoard [] _ _ _ = markBoard
-fillNeighbours markBoard (n:nbs) y x sign =
-    fillNeighbours (fillCell markBoard (getNbY markBoard n y) (getNbX markBoard n x) sign)
-        nbs y x sign
+otherSign :: Char -> Char
+otherSign 'X' = '0' 
+otherSign '0' = 'X'
+otherSign _ = '.'
+
+-- | Change the specified neighbours to the given char. If the neighbour already has
+--   a different char it returns Nothing
+fillNeighbours :: Board -> [Neighbour] -> Int -> Int -> Char -> Maybe Board
+fillNeighbours markBoard [] _ _ _ = Just markBoard
+fillNeighbours markBoard (n:nbs) y x sign = do
+    nby <- Just (getNbY markBoard n y)
+    nbx <- Just (getNbX markBoard n x)
+    if maybeToBool (isCellFilled markBoard nby nbx (otherSign sign )) then Nothing
+    else fillNeighbours (fillCell markBoard nby nbx sign) nbs y x sign
 
 -- | Check if specified cell has the given char.
 isCellFilled :: Board -> Maybe Int -> Maybe Int -> Char -> Maybe Bool
@@ -110,10 +118,10 @@ getFilledNeighbours board y x sign = go board [] (getValidNeighbours board y x) 
     go board filledNeighbours (n:nbs) y x sign | isNeighbourFilled board n y x sign = go board (n:filledNeighbours) nbs y x sign
                                                | otherwise = go board filledNeighbours nbs y x sign
 
-fillFullRemainingOfCell :: Board -> Board -> Int -> Int -> Board
-fillFullRemainingOfCell numBoard markBoard y x
-    | (countNotSignNeighbours markBoard y x 'X') == digitToInt (element numBoard y x) = fillNeighbours markBoard (getValidNeighbours markBoard y x) y x 'X'
-    | otherwise = markBoard
+-- fillFullRemainingOfCell :: Board -> Board -> Int -> Int -> Board
+-- fillFullRemainingOfCell numBoard markBoard y x
+--     | (countNotSignNeighbours markBoard y x 'X') == digitToInt (element numBoard y x) = fillNeighbours markBoard (getValidNeighbours markBoard y x) y x 'X'
+--     | otherwise = markBoard
 
 boardToString :: Board -> String
 boardToString board = hLine board ++ boardToString_ board ++ hLine board where
