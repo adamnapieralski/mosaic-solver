@@ -3,9 +3,7 @@ import Board
 import Neighbour
 import SimpleLogicSolver
 import BacktrackingSolver
-
-import Data.Char
-import Data.Maybe
+import Utils
 
 -- | Solve the mosaic problem
 solve :: Board -> Board
@@ -19,14 +17,14 @@ solve numBoard = let h = getH numBoard
 -- | Solve the mosaic problem using basic logic. Cells are updated only when they can be clearly marked as filled or empty.
 --   The alorithm iterates over the board until all cells are defined or no more changes can be made in simple logic way
 solveSimpleLogic :: Board -> Board -> Board -> Board
-solveSimpleLogic numBoard resBoard prevBoard = go numBoard (Just resBoard) (Just prevBoard) False where
+solveSimpleLogic numBoard resBoard prevBoard = go numBoard (Just resBoard) (Just prevBoard) False where    
     go _ resBoard _ True = fromJust resBoard
     go numBoard Nothing _ _ = makeEmptyWithSize (getH numBoard) (getW numBoard)
     go numBoard resBoard prevBoard solved = go numBoard (SimpleLogicSolver.processBoard numBoard (fromJust resBoard) 0 0) resBoard (simpleLogicStopValidation (fromJust resBoard) (fromJust prevBoard))
 
 -- | Solve the mosaic problem using advanced logic - backtracking.
 solveBacktracking :: Board -> Board -> Board -> Board
-solveBacktracking numBoard resBoard prevBoard = go numBoard (Just resBoard) (Just prevBoard) False where
+solveBacktracking numBoard resBoard prevBoard = go numBoard (Just resBoard) (Just prevBoard) False where    
     go _ resBoard _ True = fromJust resBoard
     go numBoard Nothing _ _ = makeEmptyWithSize (getH numBoard) (getW numBoard)
     go numBoard resBoard prevBoard solved = go numBoard (BacktrackingSolver.processBoard numBoard (fromJust resBoard)) resBoard (simpleLogicStopValidation (fromJust resBoard) (fromJust prevBoard))
