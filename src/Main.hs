@@ -2,21 +2,20 @@ module Main where
 import Solver
 import IOHandler ( readBoard )
 import Board
-import Neighbour
-import System.Environment ( getArgs )
-
-inputFile :: [[Char]] -> [Char]
-inputFile [x] = x
-inputFile _ = "data/heart.txt"
 
 main :: IO ()
 main = do
-    args <- getArgs
-    board <- readBoard (inputFile args)
-    let resBoard = solve board
-    putStr "result \n"
-    putStr (boardToString resBoard)
-    putStr "pretty \n"
-    putStr (boardToString (makePretty resBoard))
-    putStr "input \n"
+    putStrLn ""
+    putStrLn "-------------------------------------------------------------------------"
+    putStrLn "----------------------- Welcome to mosaic-solver! -----------------------"
+    putStrLn "-------------------------------------------------------------------------"
+    putStrLn ""
+    putStrLn "Please provide a path to the input file with a mosaic you want to solve."
+    path <- getLine
+    board <- readBoard path
+    putStrLn ">>> Input <<<"
     putStr (boardToString board)
+    let resBoard = solve board
+    putStrLn "<<< Solved >>>"
+    putStr (boardToString (makePretty resBoard))
+
