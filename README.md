@@ -26,6 +26,13 @@ cabal run
 ## Test data
 Sample input data is provided in `data/` directory.
 
+## Showcase
+You can see mosaic-solver in work with showcase data inputs running:
+```
+./showcase.sh
+```
+Its results are also presented in [showcase_out.txt](./showcase_out.txt).
+
 ## Authors
 - Adam Napieralski - [adamnapieralski](https://github.com/adamnapieralski)
 - Łukasz Kostrzewa - [kost13](https://github.com/kost13)
