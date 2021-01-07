@@ -26,6 +26,10 @@ cabal run
 ## Test data
 Sample input data is provided in `data/` directory.
 
+### Sources
+- `lion` and `boat` - [link](https://www.conceptispuzzles.com/index.aspx?uri=puzzle/fill-a-pix)
+- `sth` - [link](https://github.com/chryosolo/Fill-A-Pix/blob/master/SampleGrid.txt)
+
 ## Showcase
 You can see mosaic-solver in work with showcase data inputs running:
 ```
