@@ -4,7 +4,6 @@ import Neighbour
 import SimpleLogicSolver
 import BacktrackingSolver
 
-import Debug.Trace ( trace )
 import Data.Char
 import Data.Maybe
 
@@ -21,7 +20,6 @@ solve numBoard = let h = getH numBoard
 --   The alorithm iterates over the board until all cells are defined or no more changes can be made in simple logic way
 solveSimpleLogic :: Board -> Board -> Board -> Board
 solveSimpleLogic numBoard resBoard prevBoard = go numBoard (Just resBoard) (Just prevBoard) False where
-    go _ resBoard _ _ | trace (maybe "Error, wrong input board" boardToString resBoard) False = undefined
     go _ resBoard _ True = fromJust resBoard
     go numBoard Nothing _ _ = makeEmptyWithSize (getH numBoard) (getW numBoard)
     go numBoard resBoard prevBoard solved = go numBoard (SimpleLogicSolver.processBoard numBoard (fromJust resBoard) 0 0) resBoard (simpleLogicStopValidation (fromJust resBoard) (fromJust prevBoard))
@@ -29,7 +27,6 @@ solveSimpleLogic numBoard resBoard prevBoard = go numBoard (Just resBoard) (Just
 -- | Solve the mosaic problem using advanced logic - backtracking.
 solveBacktracking :: Board -> Board -> Board -> Board
 solveBacktracking numBoard resBoard prevBoard = go numBoard (Just resBoard) (Just prevBoard) False where
-    go _ resBoard _ _ | trace (maybe "Error, wrong input board" boardToString resBoard) False = undefined
     go _ resBoard _ True = fromJust resBoard
     go numBoard Nothing _ _ = makeEmptyWithSize (getH numBoard) (getW numBoard)
     go numBoard resBoard prevBoard solved = go numBoard (BacktrackingSolver.processBoard numBoard (fromJust resBoard)) resBoard (simpleLogicStopValidation (fromJust resBoard) (fromJust prevBoard))

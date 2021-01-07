@@ -4,7 +4,6 @@ import Data.Char ( digitToInt, intToDigit )
 import Data.List ( (\\) )
 import Data.Maybe
 import SimpleLogicSolver
-import Debug.Trace
 import Neighbour
 
 checkSolved :: Board -> Bool
