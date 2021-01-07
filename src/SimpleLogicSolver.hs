@@ -1,8 +1,6 @@
 module SimpleLogicSolver where
 import Board
-import Data.Char ( digitToInt )
-import Data.List ( (\\) )
-import Data.Maybe
+import Utils ( fromJust, digitToInt, (\\) ) 
 
 -- | For the given cell update its neighbours using basic logic,
 --   i.e. modify them only if they can be clearly defined
