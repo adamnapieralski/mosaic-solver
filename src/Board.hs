@@ -3,8 +3,6 @@ module Board where
 import Neighbour
 import Utils
 
-import Data.Char
-
 -- | Board represents mosaic's board used in solving process
 --   both for input (numeric) and output (Char/sign marked)
 newtype Board = Board [String] deriving (Show)
@@ -70,12 +68,6 @@ fillCell markBoard y x sign =
             Just x -> replaceCell markBoard y x sign
             Nothing -> markBoard
         Nothing -> markBoard
-
--- | Get 'opposite' sign used in result board marking
-otherSign :: Char -> Char
-otherSign 'X' = '0' 
-otherSign '0' = 'X'
-otherSign _ = '.'
 
 -- | Change the specified neighbours to the given char. If the neighbour already has
 --   a different char it returns Nothing

@@ -1,11 +1,9 @@
 module BacktrackingSolver where
 import Board
-import Data.Char ( digitToInt, intToDigit )
-import Data.List ( (\\) )
-import Data.Maybe
+
 import SimpleLogicSolver
-import Debug.Trace
 import Neighbour
+import Utils ( fromJust ) 
 
 checkSolved :: Board -> Bool
 checkSolved board = checkBoard board check where
